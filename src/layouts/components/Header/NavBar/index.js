@@ -18,18 +18,28 @@ import Menu from '@material-ui/icons/Menu';
 import { NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import styles from './styles';
+import * as productsActions from '../../../../store/actions/products';
 import * as alertActions from '../../../../store/actions/alerts';
 import './style.css';
 
+/**
+ *
+ * @class NavBar
+ * @extends {React.Component}
+ */
 class NavBar extends React.Component {
+  static propTypes = {
+    searchAllProducts: PropTypes.func.isRequired,
+  };
   state = {
     mobileOpen: false,
+    search: '',
   };
 
-  handleDrawerToggle() {
-    this.setState({ mobileOpen: !this.state.mobileOpen });
-  }
-
+  /**
+   *
+   * @memberOf NavBar
+   */
   componentDidMount() {
     window.addEventListener('scroll', event => {
       const scrollpos = window.scrollY;
@@ -45,6 +55,38 @@ class NavBar extends React.Component {
     });
   }
 
+  onSearchInputChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  submitSearch = e => {
+    const { searchAllProducts } = this.props;
+    const { search } = this.state;
+    if (e.which === 13 || e.keyCode === 13 || e.key === 'Enter') {
+      return searchAllProducts({
+        query_string: search,
+        all_words: 'yes',
+        page: 1,
+        limit: 20,
+      });
+    }
+  };
+
+  /**
+   *
+   * @memberOf NavBar
+   */
+  handleDrawerToggle() {
+    this.setState({ mobileOpen: !this.state.mobileOpen });
+  }
+
+  /**
+   *
+   * @returns
+   * @memberOf NavBar
+   */
   render() {
     const { classes, brand } = this.props;
 
@@ -110,6 +152,8 @@ class NavBar extends React.Component {
                 <InputBase
                   placeholder="Search…"
                   name="search"
+                  onKeyDown={this.submitSearch}
+                  onChange={this.onSearchInputChange}
                   classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput,
@@ -192,10 +236,17 @@ NavBar.propTypes = {
   absolute: PropTypes.bool,
 };
 
+const mapStateToProps = ({ products }) => {
+  return {
+    isLoading: products.all.isLoading,
+  };
+};
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       showCart: alertActions.showCart,
+      searchAllProducts: productsActions.searchAllProducts,
     },
     dispatch,
   );
@@ -203,7 +254,7 @@ function mapDispatchToProps(dispatch) {
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps,
   )(NavBar),
 );

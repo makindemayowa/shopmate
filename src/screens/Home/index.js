@@ -19,6 +19,7 @@ import {
   Button,
   Fab,
   TextField,
+  CircularProgress,
 } from '@material-ui/core';
 import { Slider } from 'material-ui-slider';
 import withWidth from '@material-ui/core/withWidth';
@@ -47,6 +48,7 @@ class Home extends Component {
     getAllProducts: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired,
     products: PropTypes.array.isRequired,
+    isLoading: PropTypes.bool.isRequired,
   };
 
   /**
@@ -68,7 +70,7 @@ class Home extends Component {
    * @memberOf Home
    */
   render() {
-    const { classes, products } = this.props;
+    const { classes, products, isLoading } = this.props;
 
     let currentProducts = products;
 
@@ -295,16 +297,22 @@ class Home extends Component {
                   </div>
                 </Paper>
               </div>
-              <div className="w-3/4 flex flex-wrap ml-6 productsSection">
-                {currentProducts.map((product, index) => (
-                  <div
-                    key={index}
-                    className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/3 mb-4"
-                  >
-                    <ListProduct product={product} />
-                  </div>
-                ))}
-              </div>
+              {isLoading ? (
+                <div className={classes.progressContainer}>
+                  <CircularProgress color="primary" />
+                </div>
+              ) : (
+                <div className="w-3/4 flex flex-wrap ml-6 productsSection">
+                  {currentProducts.map((product, index) => (
+                    <div
+                      key={index}
+                      className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/3 mb-4"
+                    >
+                      <ListProduct product={product} />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </Section>
           <Section>
@@ -331,6 +339,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = ({ products, categories, departments }) => {
   return {
     products: products.all.data.rows,
+    isLoading: products.all.isLoading,
   };
 };
 

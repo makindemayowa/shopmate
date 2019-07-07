@@ -32,6 +32,21 @@ const allProductsReducer = function(state = initialState, action) {
         error: action.payload,
       };
     }
+    case Actions.SEARCH_ALL_PRODUCTS: {
+      return {
+        ...state,
+        isLoading: true,
+        error: false,
+      };
+    }
+    case Actions.SEARCH_ALL_PRODUCTS_SUCCESS: {
+      return {
+        ...state,
+        data: action.payload,
+        isLoading: false,
+        error: false,
+      };
+    }
     default: {
       return state;
     }
