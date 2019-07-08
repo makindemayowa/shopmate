@@ -39,6 +39,8 @@ class productsService extends EventEmitter {
     page,
     limit,
     description_length,
+    isFilter,
+    priceRange,
   }) => {
     return new Promise((resolve, reject) => {
       axios
@@ -52,7 +54,20 @@ class productsService extends EventEmitter {
           },
         })
         .then(response => {
-          resolve(response.data);
+          if (isFilter) {
+            const filtered = response.data.rows.filter(
+              product =>
+                parseFloat(product.price) >= priceRange[0] &&
+                parseFloat(product.price) <= priceRange[1],
+            );
+            const resp = {
+              ...response.data,
+              rows: filtered,
+            };
+            resolve(resp);
+          } else {
+            resolve(response.data);
+          }
         })
         .catch(error => {
           reject(error.response);
@@ -154,6 +169,23 @@ class productsService extends EventEmitter {
         })
         .then(response => {
           resolve(response.data.user);
+        })
+        .catch(error => {
+          reject(error.response);
+        });
+    });
+  };
+
+  /* ---------------------------------------------- */
+  /* The Following Methods are for product attributes*/
+  /* ---------------------------------------------- */
+
+  getProductsAttribute = ({ attribute_id }) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(systemConfig.serverBaseUrl + `/attributes/values/${attribute_id}`)
+        .then(response => {
+          resolve(response.data);
         })
         .catch(error => {
           reject(error.response);
