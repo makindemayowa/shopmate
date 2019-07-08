@@ -6,6 +6,10 @@ const initialState = {
   },
   isLoading: false,
   error: false,
+  attributes: {
+    size: [],
+    color: [],
+  },
 };
 
 const allProductsReducer = function(state = initialState, action) {
@@ -45,6 +49,24 @@ const allProductsReducer = function(state = initialState, action) {
         data: action.payload,
         isLoading: false,
         error: false,
+      };
+    }
+    case Actions.GET_SIZE_ATTRIBUTE_SUCCESS: {
+      return {
+        ...state,
+        attributes: {
+          ...state.attributes,
+          size: action.payload,
+        },
+      };
+    }
+    case Actions.GET_COLOR_ATTRIBUTE_SUCCESS: {
+      return {
+        ...state,
+        attributes: {
+          ...state.attributes,
+          color: action.payload,
+        },
       };
     }
     default: {
