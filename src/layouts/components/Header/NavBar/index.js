@@ -30,6 +30,8 @@ import './style.css';
 class NavBar extends React.Component {
   static propTypes = {
     searchAllProducts: PropTypes.func.isRequired,
+    getDepartments: PropTypes.func.isRequired,
+    departments: PropTypes.array.isRequired,
   };
   state = {
     mobileOpen: false,
@@ -53,6 +55,17 @@ class NavBar extends React.Component {
         });
       }
     });
+    const { getDepartments } = this.props;
+    getDepartments();
+  }
+
+  componentDidUpdate(nextProps) {
+    const { departments, getCategoriesInDepartment } = this.props;
+    if (departments !== nextProps.departments) {
+      departments.forEach(department => {
+        getCategoriesInDepartment({ department_id: department.department_id });
+      });
+    }
   }
 
   onSearchInputChange = e => {
@@ -88,7 +101,7 @@ class NavBar extends React.Component {
    * @memberOf NavBar
    */
   render() {
-    const { classes, brand } = this.props;
+    const { classes, brand, departments, departmentsDetails } = this.props;
 
     const brandComponent = (
       <Link to="/" className={classes.brand}>
@@ -109,39 +122,27 @@ class NavBar extends React.Component {
               <div
                 className={`departments categories ${classes.linksContainer}`}
               >
-                <NavDropdown
-                  title="Regional"
-                  className="department navDropdown"
-                >
-                  <NavDropdown.Item onClick={() => {}} className="category">
-                    French
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item onClick={() => {}} className="category">
-                    Italian
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => {}} className="category">
-                    Irish
-                  </NavDropdown.Item>
-                </NavDropdown>
-                <NavDropdown title="Nature" className="department navDropdown">
-                  <NavDropdown.Item onClick={() => {}} className="category">
-                    Animal
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => {}}>Flower</NavDropdown.Item>
-                </NavDropdown>
-
-                <NavDropdown
-                  title="Seasonal"
-                  className="department navDropdown"
-                >
-                  <NavDropdown.Item onClick={() => {}} className="category">
-                    Christmas
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => {}} className="category">
-                    Valentine's
-                  </NavDropdown.Item>
-                </NavDropdown>
+                {!!departments.length &&
+                  departments.map(department => (
+                    <NavDropdown
+                      key={department.department_id}
+                      title={department.name}
+                      className="department navDropdown"
+                    >
+                      {departmentsDetails[department.department_id]
+                        .categories &&
+                        departmentsDetails[
+                          department.department_id
+                        ].categories.map(category => (
+                          <NavDropdown.Item
+                            key={category.category_id}
+                            className="category"
+                          >
+                            {category.name}
+                          </NavDropdown.Item>
+                        ))}
+                    </NavDropdown>
+                  ))}
               </div>
             </Hidden>
             <Hidden mdDown>
@@ -239,6 +240,8 @@ NavBar.propTypes = {
 const mapStateToProps = ({ products }) => {
   return {
     isLoading: products.all.isLoading,
+    departments: products.all.departments,
+    departmentsDetails: products.all.departmentsDetails,
   };
 };
 
@@ -247,6 +250,8 @@ function mapDispatchToProps(dispatch) {
     {
       showCart: alertActions.showCart,
       searchAllProducts: productsActions.searchAllProducts,
+      getDepartments: productsActions.getDepartments,
+      getCategoriesInDepartment: productsActions.getCategoriesInDepartment,
     },
     dispatch,
   );

@@ -10,6 +10,15 @@ export const GET_SIZE_ATTRIBUTE_SUCCESS = 'GET_SIZE_ATTRIBUTE_SUCCESS';
 export const GET_COLOR_ATTRIBUTE = 'GET_COLOR_ATTRIBUTE';
 export const GET_COLOR_ATTRIBUTE_ERROR = 'GET_COLOR_ATTRIBUTE_ERROR';
 export const GET_COLOR_ATTRIBUTE_SUCCESS = 'GET_COLOR_ATTRIBUTE_SUCCESS';
+export const GET_PRODUCTS_DEPARTMENT = 'GET_PRODUCTS_DEPARTMENT';
+export const GET_PRODUCTS_DEPARTMENT_ERROR = 'GET_PRODUCTS_DEPARTMENT_ERROR';
+export const GET_PRODUCTS_DEPARTMENT_SUCCESS =
+  'GET_PRODUCTS_DEPARTMENT_SUCCESS';
+export const GET_CATEGORIES_IN_DEPARTMENT = 'GET_CATEGORIES_IN_DEPARTMENT';
+export const GET_CATEGORIES_IN_DEPARTMENT_ERROR =
+  'GET_CATEGORIES_IN_DEPARTMENT_ERROR';
+export const GET_CATEGORIES_IN_DEPARTMENT_SUCCESS =
+  'GET_CATEGORIES_IN_DEPARTMENT_SUCCESS';
 
 export const getAllProducts = data => ({
   type: GET_ALL_PRODUCTS,
@@ -28,5 +37,14 @@ export const getProductsSizeAttribute = data => ({
 
 export const getProductsColorAttribute = data => ({
   type: GET_COLOR_ATTRIBUTE,
+  payload: data,
+});
+
+export const getDepartments = () => ({
+  type: GET_PRODUCTS_DEPARTMENT,
+});
+
+export const getCategoriesInDepartment = data => ({
+  type: GET_CATEGORIES_IN_DEPARTMENT,
   payload: data,
 });

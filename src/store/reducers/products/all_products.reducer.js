@@ -5,6 +5,10 @@ const initialState = {
     rows: [],
   },
   isLoading: false,
+  departments: [],
+  departmentsDetails: {
+    1: { department: {}, categories: [] },
+  },
   error: false,
   attributes: {
     size: [],
@@ -66,6 +70,29 @@ const allProductsReducer = function(state = initialState, action) {
         attributes: {
           ...state.attributes,
           color: action.payload,
+        },
+      };
+    }
+    case Actions.GET_PRODUCTS_DEPARTMENT_SUCCESS: {
+      const departmentsDetails = {};
+      action.payload.forEach(
+        dept => (departmentsDetails[dept.department_id] = { department: dept }),
+      );
+      return {
+        ...state,
+        departmentsDetails,
+        departments: action.payload,
+      };
+    }
+    case Actions.GET_CATEGORIES_IN_DEPARTMENT_SUCCESS: {
+      return {
+        ...state,
+        departmentsDetails: {
+          ...state.departmentsDetails,
+          [action.payload.department_id]: {
+            ...state.departmentsDetails[action.payload.department_id],
+            categories: action.payload.categories,
+          },
         },
       };
     }

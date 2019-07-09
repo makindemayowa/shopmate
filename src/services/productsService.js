@@ -192,6 +192,38 @@ class productsService extends EventEmitter {
         });
     });
   };
+
+  getDepartments = () => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(systemConfig.serverBaseUrl + `/departments`)
+        .then(response => {
+          resolve(response.data);
+        })
+        .catch(error => {
+          reject(error.response);
+        });
+    });
+  };
+
+  getCategoriesInDepartment = ({ department_id }) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(
+          systemConfig.serverBaseUrl +
+            `/categories/inDepartment/${department_id}`,
+        )
+        .then(response => {
+          resolve({
+            department_id,
+            categories: response.data,
+          });
+        })
+        .catch(error => {
+          reject(error.response);
+        });
+    });
+  };
 }
 
 const instance = new productsService();
